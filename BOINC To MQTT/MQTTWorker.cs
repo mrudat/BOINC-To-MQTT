@@ -1,15 +1,6 @@
 ﻿using AsyncQueue;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Server;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 
 namespace BOINC_To_MQTT
 {
@@ -96,7 +87,7 @@ namespace BOINC_To_MQTT
 
         internal async Task RegisterSubscription(MqttClientSubscribeOptions subscribeOptions, Func<MqttApplicationMessageReceivedEventArgs, Task> callback)
         {
-            await subscribeQueue.EnqueueAsync(new Subscription(subscribeOptions, callback));
+            subscribeQueue.Enqueue(new Subscription(subscribeOptions, callback));
         }
 
         private async Task RegisterSubscriptions(IMqttClient mqttClient, CancellationToken stoppingToken)
@@ -116,7 +107,7 @@ namespace BOINC_To_MQTT
 
         internal async Task PublishMessage(MqttApplicationMessage message, CancellationToken stoppingToken)
         {
-            await sendQueue.EnqueueAsync(message, stoppingToken);
+            sendQueue.Enqueue(message, stoppingToken);
         }
 
         private async Task PublishMessages(IMqttClient mqttClient, CancellationToken stoppingToken)

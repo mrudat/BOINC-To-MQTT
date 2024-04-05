@@ -4,12 +4,16 @@
         private readonly Queue<T> theQueue = new();
         private readonly Queue<TaskCompletionSource<T>> waitForItemsQueue = new();
 
-        public AsyncQueue() {
-        }
-
-        public async Task EnqueueAsync(T item, CancellationToken cancellationToken = default) {
-            if (waitForItemsQueue.TryDequeue(out var tcs))
-                tcs.SetResult(item);
+        public void Enqueue(T item, CancellationToken cancellationToken = default)
+        {
+            if (waitForItemsQueue.TryDequeue(out var taskCompletionSource))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                if (taskCompletionSource.Task.Status == TaskStatus.Canceled) { 
+                    throw new TaskCanceledException();
+                }
+                taskCompletionSource.SetResult(item);
+            }
             else
                 theQueue.Enqueue(item);
         }
@@ -18,23 +22,13 @@
             if (theQueue.TryDequeue(out var item))
                 return item;
 
-            return await WaitForNextItem(cancellationToken);
-        }
+            var taskCompletionSource = new TaskCompletionSource<T>();
 
-        private Task<T> WaitForNextItem(CancellationToken cancellationToken = default)
-        {
-            var tcs = new TaskCompletionSource<T>();
-            var ctr = cancellationToken.Register(() =>
-            {
-                tcs.TrySetCanceled();
-            });
-            tcs.Task.ContinueWith(async (t) =>
-            {
-                await ctr.DisposeAsync();
-                return await t;
-            });
-            waitForItemsQueue.Enqueue(tcs);
-            return tcs.Task; 
+            using var ctr = cancellationToken.Register(taskCompletionSource.SetCanceled);
+            
+            waitForItemsQueue.Enqueue(taskCompletionSource);
+
+            return await taskCompletionSource.Task;
         }
     }
 }
