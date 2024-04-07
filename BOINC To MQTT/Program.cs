@@ -1,16 +1,15 @@
-﻿using BOINC_To_MQTT;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using MQTTWorker;
+using BOINCWorker;
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
 builder.Services
     .AddSystemd()
-    .AddWindowsService()
-    .AddHostedService<MQTTWorker>()
-    ;
+    .AddWindowsService();
 
-//builder.Services.Add
+builder.Services
+    .AddMQTTWorkerService(builder.Configuration)
+    .AddBOINCWorkerService(builder.Configuration);
 
 using IHost host = builder.Build();
 

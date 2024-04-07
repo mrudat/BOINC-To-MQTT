@@ -5,9 +5,31 @@ VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BOINC To MQTT", "BOINC To MQTT\BOINC To MQTT.csproj", "{93027F8D-816E-4EA8-81CF-7BD3D28A87E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncQueueTest", "AsyncQueueTest\AsyncQueueTest.csproj", "{03181E09-F1F6-4761-B6A1-6036BA5C5519}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncQueue.Tests", "AsyncQueue.Tests\AsyncQueue.Tests.csproj", "{03181E09-F1F6-4761-B6A1-6036BA5C5519}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncQueue", "AsyncQueue\AsyncQueue.csproj", "{6221B250-84BA-49C0-AE31-1B6978D84AAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncQueue", "AsyncQueue\AsyncQueue.csproj", "{6221B250-84BA-49C0-AE31-1B6978D84AAB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BOINC To MQTT.Tests", "BOINC To MQTT.Tests\BOINC To MQTT.Tests.csproj", "{6B46E429-06CC-47DB-9E29-2FEE44488EF4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A1CFE16B-3D30-44E6-8E09-422689816ADC}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQTTWorker", "MQTTWorker\MQTTWorker.csproj", "{5DFFDCB4-6D2F-42D6-BBA9-74206D17460B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQTTWorker.Tests", "MQTTWorker.Tests\MQTTWorker.Tests.csproj", "{0A5948DF-D48A-4859-A1B8-335C4AD717F9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BOINCWorker", "BOINCWorker\BOINCWorker.csproj", "{DAD3C9E2-2525-4E1D-BCEE-5D5101BA1131}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BOINCWorker.Tests", "BOINCWorker.Tests\BOINCWorker.Tests.csproj", "{C35C3771-99E3-4518-9D0D-567E6D107AFC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonStuff", "CommonStuff\CommonStuff.csproj", "{A5468DF4-CAC0-4225-B49B-14CB1E795B6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +49,30 @@ Global
 		{6221B250-84BA-49C0-AE31-1B6978D84AAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6221B250-84BA-49C0-AE31-1B6978D84AAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6221B250-84BA-49C0-AE31-1B6978D84AAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B46E429-06CC-47DB-9E29-2FEE44488EF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B46E429-06CC-47DB-9E29-2FEE44488EF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B46E429-06CC-47DB-9E29-2FEE44488EF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B46E429-06CC-47DB-9E29-2FEE44488EF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DFFDCB4-6D2F-42D6-BBA9-74206D17460B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DFFDCB4-6D2F-42D6-BBA9-74206D17460B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DFFDCB4-6D2F-42D6-BBA9-74206D17460B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DFFDCB4-6D2F-42D6-BBA9-74206D17460B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A5948DF-D48A-4859-A1B8-335C4AD717F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A5948DF-D48A-4859-A1B8-335C4AD717F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A5948DF-D48A-4859-A1B8-335C4AD717F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A5948DF-D48A-4859-A1B8-335C4AD717F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAD3C9E2-2525-4E1D-BCEE-5D5101BA1131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAD3C9E2-2525-4E1D-BCEE-5D5101BA1131}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAD3C9E2-2525-4E1D-BCEE-5D5101BA1131}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAD3C9E2-2525-4E1D-BCEE-5D5101BA1131}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C35C3771-99E3-4518-9D0D-567E6D107AFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C35C3771-99E3-4518-9D0D-567E6D107AFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C35C3771-99E3-4518-9D0D-567E6D107AFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C35C3771-99E3-4518-9D0D-567E6D107AFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5468DF4-CAC0-4225-B49B-14CB1E795B6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5468DF4-CAC0-4225-B49B-14CB1E795B6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5468DF4-CAC0-4225-B49B-14CB1E795B6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5468DF4-CAC0-4225-B49B-14CB1E795B6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

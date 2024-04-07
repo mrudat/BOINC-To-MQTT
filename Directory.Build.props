@@ -1,0 +1,12 @@
+<Project>
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<IsAotCompatible>true</IsAotCompatible>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(MSBuildProjectName).Tests" />
+		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+	</ItemGroup>
+</Project>
