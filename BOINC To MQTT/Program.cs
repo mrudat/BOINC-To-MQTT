@@ -1,16 +1,30 @@
-﻿using MQTTWorker;
-using BOINCWorker;
+﻿using BOINC_To_MQTT;
 
-HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+internal class Program
+{
+    private static async Task Main(string[] args)
+    {
+        HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
-builder.Services
-    .AddSystemd()
-    .AddWindowsService();
+        builder.Services
+            .AddSystemd()
+            .AddWindowsService();
 
-builder.Services
-    .AddMQTTWorkerService(builder.Configuration)
-    .AddBOINCWorkerService(builder.Configuration);
+        builder.Services
+            .AddHostedService<BOINC2MQTTWorker>()
+            .AddHostedService<BOINCConnection>()
+            .AddHostedService<MQTTConnection>();
 
-using IHost host = builder.Build();
+        builder.Services
+            .AddSingleton<CPUController>()
+            .AddSingleton<GPUController>()
+            .AddSingleton<ThrottleController>();
 
-await host.RunAsync();
+        builder.Services
+            .Configure<BOINC2MQTTWorkerOptions>(builder.Configuration.GetSection(BOINC2MQTTWorkerOptions.ConfigurationSectionName));
+
+        using IHost host = builder.Build();
+
+        await host.RunAsync();
+    }
+}
