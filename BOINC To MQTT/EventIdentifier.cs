@@ -1,4 +1,4 @@
-﻿namespace BOINC_To_MQTT;
+namespace BOINC_To_MQTT;
 
 public enum EventIdentifier : int
 {
@@ -9,4 +9,6 @@ public enum EventIdentifier : int
     PausedGPUWorkload,
     ReadCPUUsageLimit,
     UnhandledTopic,
+    FullThrottle,
+    ErrorFailedToConnectoToBoinc,
 }

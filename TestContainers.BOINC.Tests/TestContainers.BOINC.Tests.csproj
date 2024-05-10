@@ -1,8 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>BOINC_To_MQTT.Tests</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -11,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BoincRpc" Version="1.0.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -20,13 +20,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Meziantou.Extensions.Logging.Xunit" Version="1.0.7" />
     <PackageReference Include="Meziantou.Xunit.ParallelTestFramework" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="8.4.0" />
+    <PackageReference Include="Meziantou.Extensions.Logging.Xunit" Version="1.0.7" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" Version="21.0.2" />
-    <PackageReference Include="Testcontainers" Version="3.8.0" />
     <PackageReference Include="xunit" Version="2.8.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.0">
       <PrivateAssets>all</PrivateAssets>
@@ -35,12 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BOINC To MQTT\BOINC To MQTT.csproj" />
     <ProjectReference Include="..\TestContainers.BOINC\TestContainers.BOINC.csproj" />
-    <ProjectReference Include="..\Testcontainers.EMQX\Testcontainers.EMQX.csproj" />
-    <ProjectReference Include="..\Testcontainers.HiveMQ\Testcontainers.HiveMQ.csproj" />
-    <ProjectReference Include="..\Testcontainers.HomeAssistant\Testcontainers.HomeAssistant.csproj" />
-    <ProjectReference Include="..\Testcontainers.Mosquitto\Testcontainers.Mosquitto.csproj" />
   </ItemGroup>
 
   <ItemGroup>

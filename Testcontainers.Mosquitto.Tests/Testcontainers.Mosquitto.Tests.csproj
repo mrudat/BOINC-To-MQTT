@@ -1,8 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>BOINC_To_MQTT.Tests</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -22,11 +21,8 @@
     </PackageReference>
     <PackageReference Include="Meziantou.Extensions.Logging.Xunit" Version="1.0.7" />
     <PackageReference Include="Meziantou.Xunit.ParallelTestFramework" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="8.4.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" Version="21.0.2" />
-    <PackageReference Include="Testcontainers" Version="3.8.0" />
+    <PackageReference Include="MQTTnet" Version="4.3.3.952" />
     <PackageReference Include="xunit" Version="2.8.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.0">
       <PrivateAssets>all</PrivateAssets>
@@ -35,11 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BOINC To MQTT\BOINC To MQTT.csproj" />
-    <ProjectReference Include="..\TestContainers.BOINC\TestContainers.BOINC.csproj" />
-    <ProjectReference Include="..\Testcontainers.EMQX\Testcontainers.EMQX.csproj" />
-    <ProjectReference Include="..\Testcontainers.HiveMQ\Testcontainers.HiveMQ.csproj" />
-    <ProjectReference Include="..\Testcontainers.HomeAssistant\Testcontainers.HomeAssistant.csproj" />
+    <ProjectReference Include="..\Testcontainers.IMqttContainer.Tests\Testcontainers.IMqttContainer.Tests.csproj" />
     <ProjectReference Include="..\Testcontainers.Mosquitto\Testcontainers.Mosquitto.csproj" />
   </ItemGroup>
 
