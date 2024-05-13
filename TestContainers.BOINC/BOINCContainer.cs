@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TestContainers.BOINC;
 
-public class BOINCContainer(BOINCConfiguration configuration) : DockerContainer(configuration)
+public class BoincContainer(BoincConfiguration configuration) : DockerContainer(configuration)
 {
     /// <summary>
     /// 

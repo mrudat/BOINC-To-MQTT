@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Testcontainers.HomeAssistant\Testcontainers.HomeAssistant.csproj" />
+    <ProjectReference Include="..\Testcontainers.Mosquitto\Testcontainers.Mosquitto.csproj" />
   </ItemGroup>
 
   <ItemGroup>

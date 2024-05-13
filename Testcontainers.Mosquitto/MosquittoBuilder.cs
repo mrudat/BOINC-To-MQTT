@@ -19,7 +19,7 @@ public sealed partial class MosquittoBuilder : ContainerBuilder<MosquittoBuilder
 
     public const ushort MqttPort = 1883;
 
-    public const ushort WebSocketsPort = 8080;
+    public const ushort MqttWebSocketsPort = 8080;
 
     private static readonly byte[] MosquittoConfFile = Encoding.UTF8.GetBytes($"""
         per_listener_settings true
@@ -28,7 +28,7 @@ public sealed partial class MosquittoBuilder : ContainerBuilder<MosquittoBuilder
         protocol mqtt
         password_file /mosquitto/config/passwd
 
-        listener {WebSocketsPort}
+        listener {MqttWebSocketsPort}
         protocol websockets
         password_file /mosquitto/config/passwd
         """);
@@ -80,7 +80,7 @@ public sealed partial class MosquittoBuilder : ContainerBuilder<MosquittoBuilder
         return base.Init()
             .WithImage(MosquittoImage)
             .WithPortBinding(MqttPort, true)
-            .WithPortBinding(WebSocketsPort, true)
+            .WithPortBinding(MqttWebSocketsPort, true)
             .WithResourceMapping(Array.Empty<byte>(), "/mosquitto/config/passwd", UnixFileModes.UserRead | UnixFileModes.UserWrite)
             .WithResourceMapping(MosquittoConfFile, "/mosquitto/config/mosquitto.conf", UnixFileModes.UserRead | UnixFileModes.UserWrite)
             .WithUsername(DefaultUsername)
@@ -95,7 +95,7 @@ public sealed partial class MosquittoBuilder : ContainerBuilder<MosquittoBuilder
 
     private async Task StartupCallback(MosquittoContainer container, CancellationToken token)
     {
-        await (container as IAddUser).AddUser(DockerResourceConfiguration.Username!, DockerResourceConfiguration.Password!, token);
+        await (container as IRequiresAuthentication).AddUser(DockerResourceConfiguration.Username!, DockerResourceConfiguration.Password!, token);
     }
 
 #if NET7_0_OR_GREATER

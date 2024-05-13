@@ -1,4 +1,4 @@
-﻿// Ignore Spelling: MQTT TLS
+// Ignore Spelling: MQTT TLS
 
 using DotNet.Testcontainers.Containers;
 
@@ -12,4 +12,11 @@ public interface ICommonMqttContainer : IContainer
     /// <param name="user">The user to authenticate to the MQTT server.</param>
     /// <returns>The <seealso cref="Uri"/> for connecting to the MQTT server.</returns>
     public Uri GetMqttUri(string? user = null);
+
+    /// <summary>
+    /// Returns a <seealso cref="Uri"/> for other containers to connect to the MQTT server.
+    /// </summary>
+    /// <param name="user">The user to authenticate to the MQTT server.</param>
+    /// <returns>The <seealso cref="Uri"/> for other containers to connect to the MQTT server.</returns>
+    public Uri GetNetworkMqttUri(string? user = null);
 }

@@ -10,4 +10,8 @@
     <PackageReference Include="Testcontainers" Version="3.8.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Testcontainers.IMqttContainer\Testcontainers.IMqttContainer.csproj" />
+  </ItemGroup>
+
 </Project>

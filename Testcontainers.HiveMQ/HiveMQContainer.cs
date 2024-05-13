@@ -1,4 +1,4 @@
-// Ignore Spelling: MQTT username ws
+// Ignore Spelling: MQTT ws
 
 using DotNet.Testcontainers.Containers;
 
@@ -8,34 +8,22 @@ public class HiveMQContainer(HiveMQConfiguration configuration) : DockerContaine
 {
     ushort IMqttContainer.MqttPort => GetMappedPublicPort(HiveMQBuilder.MqttPort);
 
-    ushort IMqttWebSocketsContainer.MqttWebSocketsPort => GetMappedPublicPort(HiveMQBuilder.WebSocketsPort);
+    ushort IMqttWebSocketsContainer.MqttWebSocketsPort => GetMappedPublicPort(HiveMQBuilder.MqttWebSocketsPort);
 
-    Uri ICommonMqttContainer.GetMqttUri(string? user) => (this as IMqttContainer).GetMqttUri(user);
+    Uri ICommonMqttContainer.GetMqttUri(string? userName) => (this as IMqttContainer).GetMqttUri(userName);
 
-    Uri IMqttContainer.GetMqttUri(string? user) => SetCredentials(new UriBuilder("mqtt", Hostname, (this as IMqttContainer).MqttPort), user).Uri;
+    Uri ICommonMqttContainer.GetNetworkMqttUri(string? userName) => (this as IMqttContainer).GetNetworkMqttUri(userName);
 
-    Uri IMqttWebSocketsContainer.GetWebSocketsUri(string? user) => SetCredentials(new UriBuilder("ws", Hostname, (this as IMqttWebSocketsContainer).MqttWebSocketsPort, "mqtt"), user).Uri;
+    Uri IMqttContainer.GetMqttUri(string? userName) => SetCredentials(new UriBuilder(MqttConstants.UriSchemeMqtt, Hostname, (this as IMqttContainer).MqttPort), userName).Uri;
+    Uri IMqttContainer.GetNetworkMqttUri(string? userName) => SetCredentials(new UriBuilder(MqttConstants.UriSchemeMqtt, configuration.NetworkAliases.First(), HiveMQBuilder.MqttPort), userName).Uri;
 
-    private UriBuilder SetCredentials(UriBuilder uriBuilder, string? username)
+    Uri IMqttWebSocketsContainer.GetWebSocketsUri(string? userName) => SetCredentials(new UriBuilder(Uri.UriSchemeWs, Hostname, (this as IMqttWebSocketsContainer).MqttWebSocketsPort, "mqtt"), userName).Uri;
+
+    Uri IMqttWebSocketsContainer.GetNetworkWebSocketsUri(string? userName) => SetCredentials(new UriBuilder(Uri.UriSchemeWs, configuration.NetworkAliases.First(), HiveMQBuilder.MqttWebSocketsPort, "mqtt"), userName).Uri;
+
+    private static UriBuilder SetCredentials(UriBuilder uriBuilder, string? userName)
     {
-        if (username == null)
-        {
-            uriBuilder.UserName = Uri.EscapeDataString(configuration.Username!);
-            uriBuilder.Password = Uri.EscapeDataString(configuration.Password!);
-        }
-        else
-        {
-            uriBuilder.UserName = Uri.EscapeDataString(username);
-            uriBuilder.Password = Uri.EscapeDataString(configuration.Users[username]);
-        }
+        uriBuilder.UserName = Uri.EscapeDataString(userName ?? HiveMQBuilder.DefaultUsername);
         return uriBuilder;
-    }
-
-    public Task AddUser(string username, string password, CancellationToken cancellationToken = default)
-    {
-        // TODO enable authentication.
-        // HiveMQ's default configuration allows unauthenticated connections.
-        configuration.Users[username] = password;
-        return Task.CompletedTask;
     }
 }

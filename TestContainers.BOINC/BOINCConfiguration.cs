@@ -1,4 +1,4 @@
-// Ignore Spelling: RPC
+// Ignore Spelling: RPC BOINC
 
 using Docker.DotNet.Models;
 using DotNet.Testcontainers.Configurations;
@@ -6,15 +6,15 @@ using DotNet.Testcontainers.Configurations;
 namespace TestContainers.BOINC;
 
 /// <inheritdoc cref="ContainerConfiguration" />
-public class BOINCConfiguration : ContainerConfiguration
+public class BoincConfiguration : ContainerConfiguration
 {
-    public BOINCConfiguration() { }
+    public BoincConfiguration() { }
 
-    public BOINCConfiguration(IResourceConfiguration<CreateContainerParameters> resourceConfiguration) : base(resourceConfiguration) { }
+    public BoincConfiguration(IResourceConfiguration<CreateContainerParameters> resourceConfiguration) : base(resourceConfiguration) { }
 
-    public BOINCConfiguration(IContainerConfiguration resourceConfiguration) : base(resourceConfiguration) { }
+    public BoincConfiguration(IContainerConfiguration resourceConfiguration) : base(resourceConfiguration) { }
 
-    public BOINCConfiguration(BOINCConfiguration resourceConfiguration) : this(new BOINCConfiguration(), resourceConfiguration) { }
+    public BoincConfiguration(BoincConfiguration resourceConfiguration) : this(new BoincConfiguration(), resourceConfiguration) { }
 
-    public BOINCConfiguration(BOINCConfiguration oldValue, BOINCConfiguration newValue) : base(oldValue, newValue) { }
+    public BoincConfiguration(BoincConfiguration oldValue, BoincConfiguration newValue) : base(oldValue, newValue) { }
 }

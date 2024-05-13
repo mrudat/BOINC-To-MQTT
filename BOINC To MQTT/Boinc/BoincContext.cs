@@ -6,8 +6,5 @@ internal record BoincContext : IBoincContext
 
     CommonBoincOptions IBoincContext.Options => BoincOptions!;
 
-    string IBoincContext.GetUserReadableDescription()
-    {
-        return BoincOptions!.GetUserReadableDescription();
-    }
+    string IBoincContext.GetUserReadableDescription() => BoincOptions!.GetUserReadableDescription();
 }

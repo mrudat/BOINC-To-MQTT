@@ -3,18 +3,40 @@ using DotNet.Testcontainers.Containers;
 
 namespace Testcontainers.Mosquitto;
 
-public class MosquittoContainer(MosquittoConfiguration configuration) : DockerContainer(configuration), IMqttContainer, IMqttWebSocketsContainer, IAddUser
+public class MosquittoContainer(MosquittoConfiguration configuration) : DockerContainer(configuration), IMqttContainer, IMqttWebSocketsContainer, IRequiresAuthentication
 {
     ushort IMqttContainer.MqttPort => GetMappedPublicPort(MosquittoBuilder.MqttPort);
 
-    ushort IMqttWebSocketsContainer.MqttWebSocketsPort => GetMappedPublicPort(MosquittoBuilder.WebSocketsPort);
+    ushort IMqttWebSocketsContainer.MqttWebSocketsPort => GetMappedPublicPort(MosquittoBuilder.MqttWebSocketsPort);
 
-    Uri ICommonMqttContainer.GetMqttUri(string? user) => (this as IMqttContainer).GetMqttUri(user);
+    Uri ICommonMqttContainer.GetMqttUri(string? userName) => (this as IMqttContainer).GetMqttUri(userName);
 
-    Uri IMqttContainer.GetMqttUri(string? user) => SetCredentials(new UriBuilder("mqtt", Hostname, (int)(this as IMqttContainer).MqttPort), user).Uri;
+    Uri ICommonMqttContainer.GetNetworkMqttUri(string? userName) => (this as IMqttContainer).GetNetworkMqttUri(userName);
 
-    Uri IMqttWebSocketsContainer.GetWebSocketsUri(string? user) => SetCredentials(new UriBuilder("ws", Hostname, (int)(this as IMqttWebSocketsContainer).MqttWebSocketsPort), user).Uri;
+    Uri IMqttContainer.GetMqttUri(string? userName) => SetCredentials(new UriBuilder(MqttConstants.UriSchemeMqtt, Hostname, (this as IMqttContainer).MqttPort), userName).Uri;
 
+    Uri IMqttContainer.GetNetworkMqttUri(string? userName) => SetCredentials(new UriBuilder(MqttConstants.UriSchemeMqtt, configuration.NetworkAliases.First(), MosquittoBuilder.MqttPort), userName).Uri;
+
+    Uri IMqttWebSocketsContainer.GetWebSocketsUri(string? userName) => SetCredentials(new UriBuilder(Uri.UriSchemeWs, Hostname, (this as IMqttWebSocketsContainer).MqttWebSocketsPort), userName).Uri;
+
+    Uri IMqttWebSocketsContainer.GetNetworkWebSocketsUri(string? userName) => SetCredentials(new UriBuilder(Uri.UriSchemeWs, configuration.NetworkAliases.First(), MosquittoBuilder.MqttWebSocketsPort), userName).Uri;
+
+    async Task IRequiresAuthentication.AddUser(string userName, string password, CancellationToken cancellationToken)
+    {
+        async Task Exec(string[] command)
+        {
+            var result = await ExecAsync(command, cancellationToken);
+
+            if (result.ExitCode != 0)
+                throw new Exception("TODO throw a better exception");
+        }
+
+        await Exec(["/usr/bin/mosquitto_passwd", "-b", "/mosquitto/config/passwd", userName, password]);
+
+        configuration.Users[userName] = password;
+
+        await Exec(["kill", "-HUP", "1"]);
+    }
     private UriBuilder SetCredentials(UriBuilder uriBuilder, string? username)
     {
         if (username == null)
@@ -31,20 +53,4 @@ public class MosquittoContainer(MosquittoConfiguration configuration) : DockerCo
         return uriBuilder;
     }
 
-    async Task IAddUser.AddUser(string user, string password, CancellationToken cancellationToken)
-    {
-        async Task Exec(string[] command)
-        {
-            var result = await ExecAsync(command, cancellationToken);
-
-            if (result.ExitCode != 0)
-                throw new Exception("TODO throw a better exception");
-        }
-
-        await Exec(["/usr/bin/mosquitto_passwd", "-b", "/mosquitto/config/passwd", user, password]);
-
-        configuration.Users[user] = password;
-
-        await Exec(["kill", "-HUP", "1"]);
-    }
 }

@@ -1,7 +1,6 @@
 // Ignore Spelling: MQTT username hivemq
 
 using Docker.DotNet.Models;
-using DotNet.Testcontainers;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using System.Text.RegularExpressions;
@@ -15,11 +14,9 @@ public sealed partial class HiveMQBuilder : ContainerBuilder<HiveMQBuilder, Hive
 
     public const string DefaultUsername = "username";
 
-    public const string DefaultPassword = "password";
-
     public const ushort MqttPort = 1883;
 
-    public const ushort WebSocketsPort = 8000;
+    public const ushort MqttWebSocketsPort = 8000;
 
     public HiveMQBuilder() : this(new HiveMQConfiguration())
     {
@@ -33,26 +30,6 @@ public sealed partial class HiveMQBuilder : ContainerBuilder<HiveMQBuilder, Hive
 
     /// <inheritdoc />
     protected override HiveMQConfiguration DockerResourceConfiguration { get; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="username"></param>
-    /// <returns>A configured instance of <see cref="HiveMQBuilder"/></returns>
-    public HiveMQBuilder WithUsername(string username)
-    {
-        return Merge(DockerResourceConfiguration, new HiveMQConfiguration(username: username));
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="password"></param>
-    /// <returns>A configured instance of <see cref="HiveMQBuilder"/></returns>
-    public HiveMQBuilder WithPassword(string password)
-    {
-        return Merge(DockerResourceConfiguration, new HiveMQConfiguration(password: password));
-    }
 
     /// <inheritdoc />
     public override HiveMQContainer Build()
@@ -69,10 +46,8 @@ public sealed partial class HiveMQBuilder : ContainerBuilder<HiveMQBuilder, Hive
     {
         return base.Init()
         .WithImage(HiveMQImage)
-        .WithUsername(DefaultUsername)
-        .WithPassword(DefaultPassword)
         .WithPortBinding(MqttPort, true)
-        .WithPortBinding(WebSocketsPort, true)
+        .WithPortBinding(MqttWebSocketsPort, true)
 #if NET7_0_OR_GREATER
         .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged(HiveMQIsRunning()));
 #else
@@ -86,18 +61,7 @@ public sealed partial class HiveMQBuilder : ContainerBuilder<HiveMQBuilder, Hive
 #endif
 
     /// <inheritdoc />
-    protected override void Validate()
-    {
-        base.Validate();
-
-        _ = Guard.Argument(DockerResourceConfiguration.Username, nameof(DockerResourceConfiguration.Username))
-            .NotNull()
-            .NotEmpty();
-
-        _ = Guard.Argument(DockerResourceConfiguration.Password, nameof(DockerResourceConfiguration.Password))
-            .NotNull()
-            .NotEmpty();
-    }
+    //protected override void Validate() => base.Validate();
 
     /// <inheritdoc />
     protected override HiveMQBuilder Clone(IResourceConfiguration<CreateContainerParameters> resourceConfiguration)

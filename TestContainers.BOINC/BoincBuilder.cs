@@ -7,30 +7,30 @@ using DotNet.Testcontainers.Configurations;
 namespace TestContainers.BOINC;
 
 /// <inheritdoc cref="ContainerBuilder{TBuilderEntity, TContainerEntity, TConfigurationEntity}"/>
-public sealed partial class BoincBuilder : ContainerBuilder<BoincBuilder, BOINCContainer, BOINCConfiguration>
+public sealed partial class BoincBuilder : ContainerBuilder<BoincBuilder, BoincContainer, BoincConfiguration>
 {
     public const string BOINCImage = "boinc/client:latest";
 
     public const ushort GuiRpcPort = 31416;
 
-    public BoincBuilder() : this(new BOINCConfiguration())
+    public BoincBuilder() : this(new BoincConfiguration())
     {
         DockerResourceConfiguration = Init().DockerResourceConfiguration;
     }
 
-    private BoincBuilder(BOINCConfiguration resourceConfiguration) : base(resourceConfiguration)
+    private BoincBuilder(BoincConfiguration resourceConfiguration) : base(resourceConfiguration)
     {
         DockerResourceConfiguration = resourceConfiguration;
     }
 
     /// <inheritdoc />
-    protected override BOINCConfiguration DockerResourceConfiguration { get; }
+    protected override BoincConfiguration DockerResourceConfiguration { get; }
 
     /// <inheritdoc />
-    public override BOINCContainer Build()
+    public override BoincContainer Build()
     {
         Validate();
-        return new BOINCContainer(DockerResourceConfiguration);
+        return new BoincContainer(DockerResourceConfiguration);
     }
 
     /// <inheritdoc />
@@ -52,18 +52,18 @@ public sealed partial class BoincBuilder : ContainerBuilder<BoincBuilder, BOINCC
     /// <inheritdoc />
     protected override BoincBuilder Clone(IResourceConfiguration<CreateContainerParameters> resourceConfiguration)
     {
-        return Merge(DockerResourceConfiguration, new BOINCConfiguration(resourceConfiguration));
+        return Merge(DockerResourceConfiguration, new BoincConfiguration(resourceConfiguration));
     }
 
     /// <inheritdoc />
     protected override BoincBuilder Clone(IContainerConfiguration resourceConfiguration)
     {
-        return Merge(DockerResourceConfiguration, new BOINCConfiguration(resourceConfiguration));
+        return Merge(DockerResourceConfiguration, new BoincConfiguration(resourceConfiguration));
     }
 
     /// <inheritdoc />
-    protected override BoincBuilder Merge(BOINCConfiguration oldValue, BOINCConfiguration newValue)
+    protected override BoincBuilder Merge(BoincConfiguration oldValue, BoincConfiguration newValue)
     {
-        return new BoincBuilder(new BOINCConfiguration(oldValue, newValue));
+        return new BoincBuilder(new BoincConfiguration(oldValue, newValue));
     }
 }

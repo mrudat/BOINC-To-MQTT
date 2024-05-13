@@ -104,6 +104,7 @@ internal partial class WorkController(
 
         await PublishAllowMoreWork(cancellationToken);
     }
+
     private async Task PublishAllowMoreWork(CancellationToken cancellationToken = default)
     {
         var clientId = await bOINCClient.GetHostCrossProjectIdentifierAsync(cancellationToken);

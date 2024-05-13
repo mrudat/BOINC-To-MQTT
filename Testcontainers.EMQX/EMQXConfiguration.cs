@@ -1,36 +1,20 @@
-// Ignore Spelling: MQTT username
+// Ignore Spelling: MQTT username EMQX
 
 using Docker.DotNet.Models;
-using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 
 namespace Testcontainers.EMQX;
 
 /// <inheritdoc cref="ContainerConfiguration" />
-public class EMQXConfiguration : ContainerConfiguration
+public class EmqxConfiguration : ContainerConfiguration
 {
-    public string? Username { get; }
-    public string? Password { get; }
+    public EmqxConfiguration() { }
 
-    public Dictionary<string, string> Users { get; } = [];
+    public EmqxConfiguration(IResourceConfiguration<CreateContainerParameters> resourceConfiguration) : base(resourceConfiguration) { }
 
-    public EMQXConfiguration(
-        string? username = null,
-        string? password = null)
-    {
-        Username = username;
-        Password = password;
-    }
+    public EmqxConfiguration(IContainerConfiguration resourceConfiguration) : base(resourceConfiguration) { }
 
-    public EMQXConfiguration(IResourceConfiguration<CreateContainerParameters> resourceConfiguration) : base(resourceConfiguration) { }
+    public EmqxConfiguration(EmqxConfiguration resourceConfiguration) : this(new EmqxConfiguration(), resourceConfiguration) { }
 
-    public EMQXConfiguration(IContainerConfiguration resourceConfiguration) : base(resourceConfiguration) { }
-
-    public EMQXConfiguration(EMQXConfiguration resourceConfiguration) : this(new EMQXConfiguration(), resourceConfiguration) { }
-
-    public EMQXConfiguration(EMQXConfiguration oldValue, EMQXConfiguration newValue) : base(oldValue, newValue)
-    {
-        Username = BuildConfiguration.Combine(oldValue.Username, newValue.Username);
-        Password = BuildConfiguration.Combine(oldValue.Password, newValue.Password);
-    }
+    public EmqxConfiguration(EmqxConfiguration oldValue, EmqxConfiguration newValue) : base(oldValue, newValue) { }
 }

@@ -9,12 +9,22 @@ public interface IMqttWebSocketsTlsContainer : ICommonMqttContainer, IGetServerC
     /// </summary>
     public ushort MqttWebSocketsTlsPort { get; }
 
-    Uri ICommonMqttContainer.GetMqttUri(string? user) => GetWebSocketsTlsUri(user);
+    Uri ICommonMqttContainer.GetMqttUri(string? userName) => GetWebSocketsTlsUri(userName);
+
+    Uri ICommonMqttContainer.GetNetworkMqttUri(string? userName) => GetNetworkWebSocketsTlsUri(userName);
+
 
     /// <summary>
     /// Returns a <seealso cref="Uri"/> for connecting to the MQTT server using Web Sockets with TLS.
     /// </summary>
-    /// <param name="user">The user to authenticate to the MQTT server.</param>
+    /// <param name="userName">The user to authenticate to the MQTT server.</param>
     /// <returns>The <seealso cref="Uri"/> for connecting to the MQTT server.</returns>
-    public Uri GetWebSocketsTlsUri(string? user = null);
+    public Uri GetWebSocketsTlsUri(string? userName = null);
+
+    /// <summary>
+    /// Returns a <seealso cref="Uri"/> for other containers to connect to the MQTT server using Web Sockets with TLS.
+    /// </summary>
+    /// <param name="userName">The user to authenticate to the MQTT server.</param>
+    /// <returns>The <seealso cref="Uri"/> for other containers to connect to the MQTT server.</returns>
+    public Uri GetNetworkWebSocketsTlsUri(string? userName = null);
 }
