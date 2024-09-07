@@ -1,22 +1,41 @@
-// Ignore Spelling: BOINC Dockerfile mosquitto openssl emqx username passwd mqtt websockets certfile keyfile
+// <copyright file="MosquittoBuilder.cs" company="Martin Rudat">
+// BOINC To MQTT - Exposes some BOINC controls via MQTT for integration with Home Assistant.
+// Copyright (C) 2024  Martin Rudat
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// </copyright>
+
+namespace Testcontainers.Mosquitto;
+
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using System.Text.RegularExpressions;
 using Docker.DotNet.Models;
 using DotNet.Testcontainers;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Testcontainers.Mosquitto;
 
 /// <inheritdoc cref="ContainerBuilder{TBuilderEntity, TContainerEntity, TConfigurationEntity}"/>
 public sealed partial class MosquittoBuilder : ContainerBuilder<MosquittoBuilder, MosquittoContainer, MosquittoConfiguration>
 {
-    public const string MosquittoImage = "eclipse-mosquitto:2.0.18-openssl";
-
-    public const string DefaultUsername = "username";
-
     public const string DefaultPassword = "password";
+    public const string DefaultUserName = "username";
 
+    [StringSyntax("Regex")]
+    public const string MosquittoIsRunningPattern = @"mosquitto version \S+ running";
+
+    public const string MosquittoImage = "eclipse-mosquitto:2.0.18-openssl";
     public const ushort MqttPort = 1883;
 
     public const ushort MqttWebSocketsPort = 8080;
@@ -33,45 +52,61 @@ public sealed partial class MosquittoBuilder : ContainerBuilder<MosquittoBuilder
         password_file /mosquitto/config/passwd
         """);
 
-    public MosquittoBuilder() : this(new MosquittoConfiguration())
+    private static readonly Regex MosquittoIsRunningRegex = MakeMosquittoIsRunning();
+
+    public MosquittoBuilder()
+        : this(new MosquittoConfiguration())
     {
-        DockerResourceConfiguration = Init().DockerResourceConfiguration;
+        this.DockerResourceConfiguration = this.Init().DockerResourceConfiguration;
     }
 
-    private MosquittoBuilder(MosquittoConfiguration resourceConfiguration) : base(resourceConfiguration)
+    private MosquittoBuilder(MosquittoConfiguration resourceConfiguration)
+        : base(resourceConfiguration)
     {
-        DockerResourceConfiguration = resourceConfiguration;
+        this.DockerResourceConfiguration = resourceConfiguration;
     }
 
     /// <inheritdoc />
     protected override MosquittoConfiguration DockerResourceConfiguration { get; }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="username"></param>
-    /// <returns>A configured instance of <see cref="MosquittoBuilder"/></returns>
-    public MosquittoBuilder WithUsername(string username)
-    {
-        return Merge(DockerResourceConfiguration, new MosquittoConfiguration(username: username));
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="password"></param>
-    /// <returns>A configured instance of <see cref="MosquittoBuilder"/></returns>
-    public MosquittoBuilder WithPassword(string password)
-    {
-        return Merge(DockerResourceConfiguration, new MosquittoConfiguration(password: password));
-    }
-
     /// <inheritdoc />
     public override MosquittoContainer Build()
     {
-        Validate();
+        this.Validate();
 
-        return new MosquittoContainer(DockerResourceConfiguration);
+        return new MosquittoContainer(this.DockerResourceConfiguration);
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="password"></param>
+    /// <returns>A configured instance of <see cref="MosquittoBuilder"/>.</returns>
+    public MosquittoBuilder WithPassword(string password)
+    {
+        return this.Merge(this.DockerResourceConfiguration, new MosquittoConfiguration(password: password));
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="userName"></param>
+    /// <returns>A configured instance of <see cref="MosquittoBuilder"/>.</returns>
+    public MosquittoBuilder WithUserName(string userName)
+    {
+        return this.Merge(this.DockerResourceConfiguration, new MosquittoConfiguration(userName: userName));
+    }
+
+    /// <inheritdoc />
+    protected override MosquittoBuilder Clone(IResourceConfiguration<CreateContainerParameters> resourceConfiguration)
+    {
+        return this.Merge(this.DockerResourceConfiguration, new MosquittoConfiguration(resourceConfiguration));
+    }
+
+    /// <inheritdoc />
+    protected override MosquittoBuilder Clone(IContainerConfiguration resourceConfiguration)
+    {
+        return this.Merge(this.DockerResourceConfiguration, new MosquittoConfiguration(resourceConfiguration));
     }
 
     /// <inheritdoc />
@@ -83,55 +118,41 @@ public sealed partial class MosquittoBuilder : ContainerBuilder<MosquittoBuilder
             .WithPortBinding(MqttWebSocketsPort, true)
             .WithResourceMapping(Array.Empty<byte>(), "/mosquitto/config/passwd", UnixFileModes.UserRead | UnixFileModes.UserWrite)
             .WithResourceMapping(MosquittoConfFile, "/mosquitto/config/mosquitto.conf", UnixFileModes.UserRead | UnixFileModes.UserWrite)
-            .WithUsername(DefaultUsername)
+            .WithUserName(DefaultUserName)
             .WithPassword(DefaultPassword)
-            .WithStartupCallback(StartupCallback)
-#if NET7_0_OR_GREATER
-            .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged(MosquittoIsRunning()));
-#else
-            .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged(new Regex(@"mosquitto version \S+ running")));
-#endif
-    }
-
-    private async Task StartupCallback(MosquittoContainer container, CancellationToken token)
-    {
-        await (container as IRequiresAuthentication).AddUser(DockerResourceConfiguration.Username!, DockerResourceConfiguration.Password!, token);
-    }
-
-#if NET7_0_OR_GREATER
-    [GeneratedRegex(@"mosquitto version \S+ running")]
-    private static partial Regex MosquittoIsRunning();
-#endif
-
-    /// <inheritdoc />
-    protected override void Validate()
-    {
-        base.Validate();
-
-        _ = Guard.Argument(DockerResourceConfiguration.Username, nameof(DockerResourceConfiguration.Username))
-          .NotNull()
-          .NotEmpty();
-
-        _ = Guard.Argument(DockerResourceConfiguration.Password, nameof(DockerResourceConfiguration.Password))
-          .NotNull()
-          .NotEmpty();
-    }
-
-    /// <inheritdoc />
-    protected override MosquittoBuilder Clone(IResourceConfiguration<CreateContainerParameters> resourceConfiguration)
-    {
-        return Merge(DockerResourceConfiguration, new MosquittoConfiguration(resourceConfiguration));
-    }
-
-    /// <inheritdoc />
-    protected override MosquittoBuilder Clone(IContainerConfiguration resourceConfiguration)
-    {
-        return Merge(DockerResourceConfiguration, new MosquittoConfiguration(resourceConfiguration));
+            .WithStartupCallback(this.StartupCallback)
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged(MosquittoIsRunningRegex));
     }
 
     /// <inheritdoc />
     protected override MosquittoBuilder Merge(MosquittoConfiguration oldValue, MosquittoConfiguration newValue)
     {
         return new MosquittoBuilder(new MosquittoConfiguration(oldValue, newValue));
+    }
+
+    /// <inheritdoc />
+    protected override void Validate()
+    {
+        base.Validate();
+
+        _ = Guard.Argument(this.DockerResourceConfiguration.UserName, nameof(this.DockerResourceConfiguration.UserName))
+          .NotNull()
+          .NotEmpty();
+
+        _ = Guard.Argument(this.DockerResourceConfiguration.Password, nameof(this.DockerResourceConfiguration.Password))
+          .NotNull()
+          .NotEmpty();
+    }
+
+#if NET7_0_OR_GREATER
+    [GeneratedRegex(MosquittoIsRunningPattern)]
+    private static partial Regex MakeMosquittoIsRunning();
+#else
+    private static Regex MakeMosquittoIsRunning() => new (MosquittoIsRunningPattern);
+#endif
+
+    private async Task StartupCallback(MosquittoContainer container, CancellationToken token)
+    {
+        await (container as IRequiresAuthentication).AddUser(this.DockerResourceConfiguration.UserName!, this.DockerResourceConfiguration.Password!, token).ConfigureAwait(false);
     }
 }

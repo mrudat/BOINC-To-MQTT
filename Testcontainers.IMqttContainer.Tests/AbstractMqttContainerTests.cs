@@ -1,4 +1,22 @@
-// Ignore Spelling: MQTT Testcontainers Initialize TLS initialization URI mqtts wss
+// <copyright file="AbstractMqttContainerTests.cs" company="Martin Rudat">
+// BOINC To MQTT - Exposes some BOINC controls via MQTT for integration with Home Assistant.
+// Copyright (C) 2024  Martin Rudat
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// </copyright>
+
+namespace Testcontainers.Tests;
 
 using DotNet.Testcontainers.Builders;
 using FluentAssertions;
@@ -7,8 +25,6 @@ using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
 using Xunit.Abstractions;
-
-namespace Testcontainers.Tests;
 
 public abstract partial class AbstractMqttContainerTests<TContainer, TBuilder, TInterface>(ITestOutputHelper testOutputHelper, ContainerFixture<TContainer, TBuilder> containerFixture)
     where TContainer : class, ICommonMqttContainer, TInterface
@@ -24,9 +40,9 @@ public abstract partial class AbstractMqttContainerTests<TContainer, TBuilder, T
 
     protected async Task AbstractTestCanConnectAsync(TInterface container)
     {
-        Uri uri = GetUri(container);
+        Uri uri = this.GetUri(container);
 
-        using var mqttClient = await ConnectTo(uri);
+        using var mqttClient = await this.ConnectTo(uri);
 
         mqttClient.IsConnected.Should().BeTrue();
     }
@@ -35,7 +51,7 @@ public abstract partial class AbstractMqttContainerTests<TContainer, TBuilder, T
     {
         Action action = () =>
         {
-            Uri uri = GetNetworkUri(container);
+            Uri uri = this.GetNetworkUri(container);
         };
 
         action.Should().Throw<InvalidOperationException>();
@@ -43,7 +59,7 @@ public abstract partial class AbstractMqttContainerTests<TContainer, TBuilder, T
 
     protected void AbstractTestGetNetworkUri(TInterface containerOnNetwork)
     {
-        Uri uri = GetNetworkUri(containerOnNetwork);
+        Uri uri = this.GetNetworkUri(containerOnNetwork);
 
         // TODO check that a mqtt client can actually connect to uri?
     }
@@ -54,15 +70,11 @@ public abstract partial class AbstractMqttContainerTests<TContainer, TBuilder, T
 
     protected async Task<IMqttClient> ConnectTo(Uri uri)
     {
-        var mqttClient = mqttFactory.CreateMqttClient();
+        var mqttClient = this.mqttFactory.CreateMqttClient();
 
-        var mqttClientOptionsBuilder = mqttFactory.CreateClientOptionsBuilder();
-
-#pragma warning disable CS0618 // Type or member is obsolete - No valid replacement for WithConnectionUri
+        var mqttClientOptionsBuilder = this.mqttFactory.CreateClientOptionsBuilder();
         mqttClientOptionsBuilder
             .WithConnectionUri(uri);
-#pragma warning restore CS0618 // Type or member is obsolete
-
         var usingTls = uri.Scheme.ToLowerInvariant() switch
         {
             "mqtts" or "wss" => true,
@@ -88,7 +100,7 @@ public abstract partial class AbstractMqttContainerTests<TContainer, TBuilder, T
         var mqttClientOptions = mqttClientOptionsBuilder
             .Build();
 
-        LogConnecting(uri);
+        this.LogConnecting(uri);
 
         await mqttClient.ConnectAsync(mqttClientOptions);
 

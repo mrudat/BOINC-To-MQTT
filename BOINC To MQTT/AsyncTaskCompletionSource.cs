@@ -1,85 +1,103 @@
-// Ignore Spelling: BOINC MQTT Awaiter
-
-using STask = System.Threading.Tasks.Task;
+// <copyright file="AsyncTaskCompletionSource.cs" company="Martin Rudat">
+// BOINC To MQTT - Exposes some BOINC controls via MQTT for integration with Home Assistant.
+// Copyright (C) 2024  Martin Rudat
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// </copyright>
 
 namespace BOINC_To_MQTT;
 
-/// <inheritdoc cref="TaskCompletionSource">
+using STask = System.Threading.Tasks.Task;
+
+/// <inheritdoc cref="TaskCompletionSource" />
 internal class AsyncTaskCompletionSource
 {
     private readonly TaskCompletionSource taskCompletionSource;
 
-    internal readonly STask Task;
-
+    /// <inheritdoc cref="TaskCompletionSource()" />
     public AsyncTaskCompletionSource()
     {
-        taskCompletionSource = new();
+        this.taskCompletionSource = new();
 
         async STask Await()
         {
-            await taskCompletionSource.Task;
+            await this.taskCompletionSource.Task.ConfigureAwait(false);
             await STask.Yield();
         }
 
-        Task = Await();
+        this.Task = Await();
     }
+
+    /// <inheritdoc cref="TaskCompletionSource.Task" />
+    public STask Task { get; init; }
 
     /// <inheritdoc cref="TaskCompletionSource.SetResult"/>
     public async STask SetResult()
     {
-        taskCompletionSource.SetResult();
-        await STask.Yield();
-    }
-
-    /// <inheritdoc cref="TaskCompletionSource.TrySetResult"/>
-    internal async STask TrySetResult()
-    {
-        taskCompletionSource.TrySetResult();
+        this.taskCompletionSource.SetResult();
         await STask.Yield();
     }
 
     /// <inheritdoc cref="TaskCompletionSource.TrySetException(Exception)"/>
     internal async STask TrySetException(Exception exception)
     {
-        taskCompletionSource.TrySetException(exception);
+        this.taskCompletionSource.TrySetException(exception);
         await STask.Yield();
     }
 
     /// <inheritdoc cref="TaskCompletionSource.TrySetException(IEnumerable{Exception})"/>
     internal async STask TrySetException(IEnumerable<Exception> exception)
     {
-        taskCompletionSource.TrySetException(exception);
+        this.taskCompletionSource.TrySetException(exception);
+        await STask.Yield();
+    }
+
+    /// <inheritdoc cref="TaskCompletionSource.TrySetResult"/>
+    internal async STask TrySetResult()
+    {
+        this.taskCompletionSource.TrySetResult();
         await STask.Yield();
     }
 }
 
-/// <inheritdoc cref="TaskCompletionSource{TResult}">
+/// <inheritdoc cref="TaskCompletionSource{TResult}"/>
 internal class AsyncTaskCompletionSource<TResult>
 {
     private readonly TaskCompletionSource<TResult> taskCompletionSource;
 
-    internal Task<TResult> Task;
-
+    /// <inheritdoc cref="TaskCompletionSource{TResult}()" />
     public AsyncTaskCompletionSource()
     {
-        taskCompletionSource = new();
+        this.taskCompletionSource = new();
 
         async Task<TResult> Await()
         {
-            var result = await taskCompletionSource.Task;
+            var result = await this.taskCompletionSource.Task.ConfigureAwait(false);
             await STask.Yield();
             return result;
         }
 
-        Task = Await();
+        this.Task = Await();
     }
 
+    /// <inheritdoc cref="TaskCompletionSource{TResult}.Task" />
+    public Task<TResult> Task { get; init; }
 
     /// <inheritdoc cref="TaskCompletionSource{TResult}.SetResult(TResult)"/>
     public async STask SetResult(TResult result)
     {
-        taskCompletionSource.SetResult(result);
+        this.taskCompletionSource.SetResult(result);
         await STask.Yield();
     }
-
 }

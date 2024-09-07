@@ -1,51 +1,83 @@
-// Ignore Spelling: MQTT username TLS mqtts ws wss EMQX
-
-using DotNet.Testcontainers.Containers;
-using System.Security.Cryptography.X509Certificates;
+// <copyright file="EmqxContainer.cs" company="Martin Rudat">
+// BOINC To MQTT - Exposes some BOINC controls via MQTT for integration with Home Assistant.
+// Copyright (C) 2024  Martin Rudat
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// </copyright>
 
 namespace Testcontainers.EMQX;
 
+using System.Security.Cryptography.X509Certificates;
+using DotNet.Testcontainers.Containers;
+
 public class EmqxContainer(EmqxConfiguration configuration) : DockerContainer(configuration), IMqttContainer, IMqttTlsContainer, IMqttWebSocketsContainer, IMqttWebSocketsTlsContainer
 {
-    ushort IMqttContainer.MqttPort => GetMappedPublicPort(EmqxBuilder.MqttPort);
+    public ushort DashboardPort => this.GetMappedPublicPort(EmqxBuilder.DashboardPort);
 
-    ushort IMqttTlsContainer.MqttTlsPort => GetMappedPublicPort(EmqxBuilder.MqttTlsPort);
+    /// <inheritdoc/>
+    ushort IMqttContainer.MqttPort => this.GetMappedPublicPort(EmqxBuilder.MqttPort);
 
-    ushort IMqttWebSocketsContainer.MqttWebSocketsPort => GetMappedPublicPort(EmqxBuilder.MqttWebSocketsPort);
+    /// <inheritdoc/>
+    ushort IMqttTlsContainer.MqttTlsPort => this.GetMappedPublicPort(EmqxBuilder.MqttTlsPort);
 
-    ushort IMqttWebSocketsTlsContainer.MqttWebSocketsTlsPort => GetMappedPublicPort(EmqxBuilder.MqttWebSocketsTlsPort);
+    /// <inheritdoc/>
+    ushort IMqttWebSocketsContainer.MqttWebSocketsPort => this.GetMappedPublicPort(EmqxBuilder.MqttWebSocketsPort);
 
-    public ushort DashboardPort => GetMappedPublicPort(EmqxBuilder.DashboardPort);
+    /// <inheritdoc/>
+    ushort IMqttWebSocketsTlsContainer.MqttWebSocketsTlsPort => this.GetMappedPublicPort(EmqxBuilder.MqttWebSocketsTlsPort);
 
+    public Uri GetDashboardUri() => new UriBuilder(Uri.UriSchemeHttp, this.Hostname, this.DashboardPort).Uri;
+
+    /// <inheritdoc/>
+    Uri IMqttTlsContainer.GetMqttTlsUri(string? userName) => SetCredentials(new UriBuilder(MqttConstants.UriSchemeMqtts, this.Hostname, (this as IMqttTlsContainer).MqttTlsPort), userName).Uri;
+
+    /// <inheritdoc/>
     Uri ICommonMqttContainer.GetMqttUri(string? userName) => (this as IMqttTlsContainer).GetMqttTlsUri(userName);
 
-    Uri ICommonMqttContainer.GetNetworkMqttUri(string? userName) => (this as IMqttTlsContainer).GetNetworkMqttTlsUri(userName);
+    /// <inheritdoc/>
+    Uri IMqttContainer.GetMqttUri(string? userName) => SetCredentials(new UriBuilder(MqttConstants.UriSchemeMqtt, this.Hostname, (this as IMqttContainer).MqttPort), userName).Uri;
 
-    Uri IMqttContainer.GetMqttUri(string? userName) => SetCredentials(new UriBuilder(MqttConstants.UriSchemeMqtt, Hostname, (this as IMqttContainer).MqttPort), userName).Uri;
-
-    Uri IMqttContainer.GetNetworkMqttUri(string? userName) => SetCredentials(new UriBuilder(MqttConstants.UriSchemeMqtt, configuration.NetworkAliases.First(), EmqxBuilder.MqttPort), userName).Uri;
-
-    Uri IMqttTlsContainer.GetMqttTlsUri(string? userName) => SetCredentials(new UriBuilder(MqttConstants.UriSchemeMqtts, Hostname, (this as IMqttTlsContainer).MqttTlsPort), userName).Uri;
-
+    /// <inheritdoc/>
     Uri IMqttTlsContainer.GetNetworkMqttTlsUri(string? userName) => SetCredentials(new UriBuilder(MqttConstants.UriSchemeMqtts, configuration.NetworkAliases.First(), EmqxBuilder.MqttTlsPort), userName).Uri;
 
-    Uri IMqttWebSocketsContainer.GetWebSocketsUri(string? userName) => SetCredentials(new UriBuilder(Uri.UriSchemeWs, Hostname, (this as IMqttWebSocketsContainer).MqttWebSocketsPort, "mqtt"), userName).Uri;
+    /// <inheritdoc/>
+    Uri ICommonMqttContainer.GetNetworkMqttUri(string? userName) => (this as IMqttTlsContainer).GetNetworkMqttTlsUri(userName);
 
-    Uri IMqttWebSocketsContainer.GetNetworkWebSocketsUri(string? userName) => SetCredentials(new UriBuilder(Uri.UriSchemeWs, configuration.NetworkAliases.First(), EmqxBuilder.MqttWebSocketsPort, "mqtt"), userName).Uri;
+    /// <inheritdoc/>
+    Uri IMqttContainer.GetNetworkMqttUri(string? userName) => SetCredentials(new UriBuilder(MqttConstants.UriSchemeMqtt, configuration.NetworkAliases.First(), EmqxBuilder.MqttPort), userName).Uri;
 
-    Uri IMqttWebSocketsTlsContainer.GetWebSocketsTlsUri(string? userName) => SetCredentials(new UriBuilder(Uri.UriSchemeWss, Hostname, (this as IMqttWebSocketsTlsContainer).MqttWebSocketsTlsPort, "mqtt"), userName).Uri;
-
+    /// <inheritdoc/>
     Uri IMqttWebSocketsTlsContainer.GetNetworkWebSocketsTlsUri(string? userName) => SetCredentials(new UriBuilder(Uri.UriSchemeWss, configuration.NetworkAliases.First(), EmqxBuilder.MqttWebSocketsTlsPort, "mqtt"), userName).Uri;
 
-    public Uri GetDashboardUri() => new UriBuilder(Uri.UriSchemeHttp, Hostname, DashboardPort).Uri;
+    /// <inheritdoc/>
+    Uri IMqttWebSocketsContainer.GetNetworkWebSocketsUri(string? userName) => SetCredentials(new UriBuilder(Uri.UriSchemeWs, configuration.NetworkAliases.First(), EmqxBuilder.MqttWebSocketsPort, "mqtt"), userName).Uri;
 
+    /// <inheritdoc/>
     Task<X509Certificate2> IGetServerCertificate.GetServerCertificateAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
+
+    /// <inheritdoc/>
+    Uri IMqttWebSocketsTlsContainer.GetWebSocketsTlsUri(string? userName) => SetCredentials(new UriBuilder(Uri.UriSchemeWss, this.Hostname, (this as IMqttWebSocketsTlsContainer).MqttWebSocketsTlsPort, "mqtt"), userName).Uri;
+
+    /// <inheritdoc/>
+    Uri IMqttWebSocketsContainer.GetWebSocketsUri(string? userName) => SetCredentials(new UriBuilder(Uri.UriSchemeWs, this.Hostname, (this as IMqttWebSocketsContainer).MqttWebSocketsPort, "mqtt"), userName).Uri;
+
     private static UriBuilder SetCredentials(UriBuilder uriBuilder, string? userName)
     {
-        uriBuilder.UserName = Uri.EscapeDataString(userName ?? EmqxBuilder.DefaultUsername);
+        uriBuilder.UserName = Uri.EscapeDataString(userName ?? EmqxBuilder.DefaultUserName);
         return uriBuilder;
     }
 }
