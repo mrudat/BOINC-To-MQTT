@@ -1,0 +1,55 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    #branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Cache .NET dependencies
+      uses: actions/cache@v4
+      with:
+        path: '~/.nuget/packages'
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build -c Release --no-restore
+    - name: Test
+      run: dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings -c Release --no-build
+    - name: Publish code coverage
+      if: github.event.ref == 'refs/heads/main'
+      uses: paambaati/codeclimate-action@v9.0.0
+      env:
+        CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+      with:
+        coverageLocations: "**/coverage.info:lcov"
+
+  todo:
+    if: github.event.ref == 'refs/heads/main'
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: "TODO to Issue"
+      uses: alstr/todo-to-issue-action@v4.13.3
+      id: "todo"
+      with:
+        COMMENT_MARKER: "//"
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
