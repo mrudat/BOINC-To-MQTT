@@ -41,7 +41,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BOINC To MQTT\BOINC To MQTT.csproj" />
-    <ProjectReference Include="..\TestContainers.BOINC\Testcontainers.Boinc.csproj" />
+    <ProjectReference Include="..\TestContainers.BOINC\Testcontainers.BOINC.csproj" />
     <ProjectReference Include="..\Testcontainers.EMQX\Testcontainers.EMQX.csproj" />
     <ProjectReference Include="..\Testcontainers.HiveMQ\Testcontainers.HiveMQ.csproj" />
     <ProjectReference Include="..\Testcontainers.HomeAssistant\Testcontainers.HomeAssistant.csproj" />

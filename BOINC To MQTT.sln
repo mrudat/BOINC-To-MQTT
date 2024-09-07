@@ -22,9 +22,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testcontainers.Mosquitto", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testcontainers.Mosquitto.Tests", "Testcontainers.Mosquitto.Tests\Testcontainers.Mosquitto.Tests.csproj", "{3E1B4E53-DAEA-41A1-9363-107A36A05537}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testcontainers.Boinc", "TestContainers.BOINC\Testcontainers.Boinc.csproj", "{3A2AD32D-194C-420C-B81E-F19CDB6C91D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testcontainers.BOINC", "TestContainers.BOINC\Testcontainers.BOINC.csproj", "{3A2AD32D-194C-420C-B81E-F19CDB6C91D8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testcontainers.Boinc.Tests", "TestContainers.BOINC.Tests\Testcontainers.Boinc.Tests.csproj", "{01061999-77B4-4D32-AF1A-097515CD9C8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testcontainers.BOINC.Tests", "TestContainers.BOINC.Tests\Testcontainers.BOINC.Tests.csproj", "{01061999-77B4-4D32-AF1A-097515CD9C8D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testcontainers.HomeAssistant", "Testcontainers.HomeAssistant\Testcontainers.HomeAssistant.csproj", "{79A6CC84-1448-4D76-93C1-D74F13DA6614}"
 EndProject
