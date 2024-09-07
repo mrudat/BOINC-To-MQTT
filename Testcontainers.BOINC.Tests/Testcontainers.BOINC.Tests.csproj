@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TestContainers.BOINC\Testcontainers.BOINC.csproj" />
+    <ProjectReference Include="..\Testcontainers.BOINC\Testcontainers.BOINC.csproj" />
   </ItemGroup>
 
   <ItemGroup>

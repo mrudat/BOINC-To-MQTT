@@ -31,7 +31,7 @@ using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
 using Testcontainers;
-using TestContainers.BOINC;
+using Testcontainers.BOINC;
 using Testcontainers.HomeAssistant;
 using Xunit.Abstractions;
 

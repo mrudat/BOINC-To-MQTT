@@ -16,7 +16,7 @@
 // along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
-namespace TestContainers.BOINC.Tests;
+namespace Testcontainers.BOINC.Tests;
 
 using BoincRpc;
 using FluentAssertions;

@@ -30,7 +30,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Testcontainers;
-using TestContainers.BOINC;
+using Testcontainers.BOINC;
 using Testcontainers.Mosquitto;
 using Xunit.Abstractions;
 

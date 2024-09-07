@@ -16,7 +16,7 @@
 // along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
-namespace TestContainers.BOINC;
+namespace Testcontainers.BOINC;
 
 using Docker.DotNet.Models;
 using DotNet.Testcontainers.Builders;

@@ -18,7 +18,7 @@
 
 namespace BOINC_To_MQTT.Tests.Fixtures;
 
-using TestContainers.BOINC;
+using Testcontainers.BOINC;
 
 public class BoincFixture : IAsyncLifetime
 {
