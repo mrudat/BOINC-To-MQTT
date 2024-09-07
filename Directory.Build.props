@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(MSBuildProjectName).Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+
+    <AdditionalFiles Include="$([MSBuild]::GetPathOfFileAbove('stylecop.json', '$(MSBuildThisFileDirectory)'))" Link="stylecop.json" />
+  </ItemGroup>
+</Project>
